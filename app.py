@@ -36,9 +36,6 @@ def format_system_prompt(business_info):
 # Initialize Groq client
 groq_client = Groq(api_key=GROQ_API_KEY)
 
-# Store conversation history (in-memory, use a database for production)
-conversation_history = {}
-
 @app.route('/webhook', methods=['GET'])
 def webhook_verify():
     mode = request.args.get('hub.mode')
@@ -64,15 +61,8 @@ def webhook_messages():
 
             if message_text:
                 try:
-                    # Initialize conversation history for this user if not exists
-                    if sender_id not in conversation_history:
-                        conversation_history[sender_id] = []
-
                     # Add user message to history
-                    conversation_history[sender_id].append({'role': 'user', 'content': message_text})
-
-                    # Limit history to last 2 messages to avoid token limits
-                    history = conversation_history[sender_id][-2:]
+                    conversation = {'role': 'user', 'content': message_text}
 
                     print("context", format_system_prompt(business_data))
                     # Call Groq API with system prompt and conversation history
@@ -80,13 +70,10 @@ def webhook_messages():
                         model='llama-3.1-8b-instant',
                         messages=[
                             {'role': 'system', 'content': format_system_prompt(business_data)},
-                            *history
+                            conversation
                         ]
                     )
                     reply = response.choices[0].message.content
-
-                    # Add bot response to history
-                    conversation_history[sender_id].append({'role': 'assistant', 'content': reply})
 
                     print(f'Replying to {sender_id}: {reply}')
                     # Send reply to Messenger
