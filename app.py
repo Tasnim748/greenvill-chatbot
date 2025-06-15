@@ -23,7 +23,7 @@ with open('business_data.json') as f:
 def format_system_prompt(business_info):
     faqs = "\n".join([f"Q: {faq['question']} A: {faq['answer']}" for faq in business_info['faqs']])
     return (
-        f"You are a customer support bot for {business_info['business_name']}. "
+        f"You are a customer support agent for {business_info['business_name']}. Your name is Rakib Hasan. "
         f"Description: {business_info['description']}\n"
         f"Hours: {business_info['hours']}\n"
         f"Contact: Email: {business_info['contact']['email']}, Phone: {business_info['contact']['phone']}, Whatsapp: {business_info['contact']['whatsapp']}\n"
