@@ -75,7 +75,7 @@ def webhook_messages():
                         ]
                     )
 
-                    print("max output tokens:", response.max_output_tokens)
+                    print("Usage:", response.usage)
                     reply = response.output_text
 
                     print(f'Replying to {sender_id}: {reply}')
