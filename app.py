@@ -1,6 +1,7 @@
+from token import OP
 from flask import Flask, request, Response
 import requests
-from groq import Groq
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
@@ -10,7 +11,7 @@ app = Flask(__name__)
 load_dotenv()
 PAGE_ACCESS_TOKEN = os.getenv('PAGE_ACCESS_TOKEN', 'YOUR_PAGE_ACCESS_TOKEN')
 VERIFY_TOKEN = os.getenv('VERIFY_TOKEN', 'my_secure_token')
-GROQ_API_KEY = os.getenv('GROQ_API_KEY', 'YOUR_GROQ_API_KEY')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', 'YOUR_CUSTOM_API_KEY')
 
 
 import json
@@ -34,7 +35,7 @@ def format_system_prompt(business_info):
     )
 
 # Initialize Groq client
-groq_client = Groq(api_key=GROQ_API_KEY)
+openai_client = OpenAI(api_key=OPENAI_API_KEY, base_url='https://openrouter.ai/api/v1')
 
 @app.route('/webhook', methods=['GET'])
 def webhook_verify():
@@ -66,9 +67,9 @@ def webhook_messages():
 
                     print("context", format_system_prompt(business_data))
                     # Call Groq API with system prompt and conversation history
-                    response = groq_client.chat.completions.create(
-                        model='llama-3.1-8b-instant',
-                        messages=[
+                    response = openai_client.responses.create(
+                        model='mistralai/mistral-small-3.2-24b-instruct:free',
+                        input=[
                             {'role': 'system', 'content': format_system_prompt(business_data)},
                             conversation
                         ]
