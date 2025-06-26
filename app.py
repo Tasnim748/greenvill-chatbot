@@ -75,7 +75,7 @@ def webhook_messages():
                         ]
                     )
 
-                    print("Usage:", response.usage)
+                    # print("Usage:", response.usage)
                     reply = response.output_text
 
                     print(f'Replying to {sender_id}: {reply}')
