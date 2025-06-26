@@ -65,7 +65,7 @@ def webhook_messages():
                     # Add user message to history
                     conversation = {'role': 'user', 'content': message_text}
 
-                    print("context", format_system_prompt(business_data))
+                    # print("context", format_system_prompt(business_data))
                     # Call Groq API with system prompt and conversation history
                     response = openai_client.responses.create(
                         model='mistralai/mistral-small-3.2-24b-instruct:free',
@@ -74,7 +74,9 @@ def webhook_messages():
                             conversation
                         ]
                     )
-                    reply = response.choices[0].message.content
+
+                    print("max output tokens:", response.max_output_tokens)
+                    reply = response.output_text
 
                     print(f'Replying to {sender_id}: {reply}')
                     # Send reply to Messenger
