@@ -4,6 +4,7 @@ import requests
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+import json
 
 app = Flask(__name__)
 
@@ -14,7 +15,6 @@ VERIFY_TOKEN = os.getenv('VERIFY_TOKEN', 'my_secure_token')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', 'YOUR_CUSTOM_API_KEY')
 
 
-import json
 
 # Load business data
 with open('business_data.json') as f:
@@ -67,16 +67,16 @@ def webhook_messages():
 
                     # print("context", format_system_prompt(business_data))
                     # Call Groq API with system prompt and conversation history
-                    response = openai_client.responses.create(
+                    response = openai_client.chat.completions.create(
                         model='mistralai/mistral-small-3.2-24b-instruct:free',
-                        input=[
+                        messages=[
                             {'role': 'system', 'content': format_system_prompt(business_data)},
                             conversation
                         ]
                     )
 
-                    print("Response:", response)
-                    reply = response
+                    print("Usage:", response.usage)
+                    reply = response.choices[0].message.content
 
                     print(f'Replying to {sender_id}: {reply}')
                     # Send reply to Messenger
