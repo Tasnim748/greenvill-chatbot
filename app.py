@@ -76,7 +76,7 @@ def webhook_messages():
                     )
 
                     print("Response:", response)
-                    reply = response.output_text
+                    reply = response
 
                     print(f'Replying to {sender_id}: {reply}')
                     # Send reply to Messenger
